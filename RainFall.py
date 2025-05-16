@@ -86,45 +86,38 @@ if st.button("Predict Rainfall"):
 
 
 
-## ================================
-# 📈 Rainfall Trend Analysis
+import matplotlib.pyplot as plt
+
+# ================================
+# 📈 Rainfall Trend Analysis (Matplotlib)
 # ================================
 st.header("📈 Rainfall Trend Analysis")
 
-# 1️⃣ Year-wise Average JUN–SEP Rainfall
-st.subheader("1️⃣ Year-wise Average JUN–SEP Rainfall in India")
+# 1️⃣ Year-wise Average JUN–SEP Rainfall in India
+st.subheader("1️⃣ Year-wise Average JUN–SEP Rainfall")
 yearly_trend = df.groupby("YEAR")["JUN-SEP"].mean().reset_index()
 
-fig1 = px.line(
-    yearly_trend,
-    x="YEAR",
-    y="JUN-SEP",
-    markers=True,
-    title="Year-wise Average JUN-SEP Rainfall in India",
-    labels={"YEAR": "Year", "JUN-SEP": "Average Rainfall (mm)"},
-    template="plotly_dark"
-)
-fig1.update_traces(line=dict(color='teal', width=3))
-fig1.update_layout(title_font_size=20, title_x=0.5)
-st.plotly_chart(fig1, use_container_width=True)
+fig1, ax1 = plt.subplots(figsize=(10, 5))
+ax1.plot(yearly_trend["YEAR"], yearly_trend["JUN-SEP"], marker='o', color='teal', linewidth=2)
+ax1.set_title("Year-wise Average JUN-SEP Rainfall in India", fontsize=16)
+ax1.set_xlabel("Year")
+ax1.set_ylabel("Average Rainfall (mm)")
+ax1.grid(True)
+st.pyplot(fig1)
 
-# 2️⃣ Subdivision-wise Rainfall Trend
-st.subheader("2️⃣ Subdivision-wise JUN–SEP Rainfall Trend")
-
-# Optional: Filter for selected subdivisions or top N
+# 2️⃣ Subdivision-wise Rainfall Trend (Top 6)
+st.subheader("2️⃣ Top 6 Subdivisions: JUN–SEP Rainfall Over the Years")
 top_subs = df.groupby("Sub_Division")["JUN-SEP"].mean().nlargest(6).index.tolist()
 sub_df = df[df["Sub_Division"].isin(top_subs)]
 
-fig2 = px.line(
-    sub_df,
-    x="YEAR",
-    y="JUN-SEP",
-    color="Sub_Division",
-    markers=True,
-    title="Top 6 Subdivisions - Year-wise JUN-SEP Rainfall Trend",
-    labels={"YEAR": "Year", "JUN-SEP": "Rainfall (mm)"},
-    template="plotly_dark"
-)
-fig2.update_layout(title_font_size=20, title_x=0.5)
-st.plotly_chart(fig2, use_container_width=True)
+fig2, ax2 = plt.subplots(figsize=(10, 6))
+for division in top_subs:
+    division_data = sub_df[sub_df["Sub_Division"] == division]
+    ax2.plot(division_data["YEAR"], division_data["JUN-SEP"], marker='o', label=division)
 
+ax2.set_title("Top 6 Subdivisions - Year-wise JUN-SEP Rainfall", fontsize=16)
+ax2.set_xlabel("Year")
+ax2.set_ylabel("Rainfall (mm)")
+ax2.legend(title="Subdivision", fontsize=8)
+ax2.grid(True)
+st.pyplot(fig2)
