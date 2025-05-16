@@ -84,39 +84,45 @@ if st.button("Predict Rainfall"):
     prediction = model.predict(input_data)[0]
     st.success(f"Predicted JUN-SEP Rainfall for **{selected_division}** in **{future_year}**: **{prediction:.2f} mm**")
 
-# =========================
-# 🌧️ Visualization Section
-# =========================
+## ================================
+# 📈 Post-Prediction Visualizations
+# ================================
+st.header("📉 Visual Analysis of Rainfall Patterns")
 
-st.markdown("---")
-st.header("📊 Rainfall Visualizations")
+# Year-wise Average Rainfall for India
+st.subheader("1️⃣ India: Year-wise Average Rainfall (JUN–SEP)")
+year_avg = df.groupby("YEAR")["JUN-SEP"].mean().reset_index()
+fig1 = px.line(year_avg, x="YEAR", y="JUN-SEP", markers=True,
+               title="Year-wise Average Rainfall (JUN–SEP)")
+st.plotly_chart(fig1, use_container_width=True)
 
-# 1. Subdivision-wise Rainfall Trend (JUN-SEP)
-st.markdown(f"**📍 JUN–SEP Rainfall Over Years – {selected_division}**")
-sub_df_plot = df[df["Sub_Division"] == selected_division]
-fig1 = px.line(sub_df_plot, x="YEAR", y="JUN-SEP", markers=True,
-               title=f"JUN–SEP Rainfall in {selected_division}")
-st.plotly_chart(fig1)
+# Subdivision with Highest & Lowest Average Rainfall
+st.subheader("2️⃣ Subdivisions with Highest & Lowest Average Rainfall")
+sub_avg = df.groupby("Sub_Division")["JUN-SEP"].mean().reset_index()
+top5 = sub_avg.sort_values(by="JUN-SEP", ascending=False).head(5)
+bottom5 = sub_avg.sort_values(by="JUN-SEP", ascending=True).head(5)
 
-# 2. PAN India - Year-wise Average Rainfall (JUN-SEP)
-st.markdown("**🌍 India-wide Average Rainfall (JUN–SEP)**")
-india_avg = df.groupby("YEAR")["JUN-SEP"].mean().reset_index()
-fig2 = px.line(india_avg, x="YEAR", y="JUN-SEP", markers=True,
-               title="India Average JUN–SEP Rainfall Over Years")
-st.plotly_chart(fig2)
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown("**Top 5 Wettest Subdivisions**")
+    fig2 = px.bar(top5, x="Sub_Division", y="JUN-SEP", color="JUN-SEP", title="Top 5 Wettest")
+    st.plotly_chart(fig2, use_container_width=True)
+with col2:
+    st.markdown("**Top 5 Driest Subdivisions**")
+    fig3 = px.bar(bottom5, x="Sub_Division", y="JUN-SEP", color="JUN-SEP", title="Top 5 Driest")
+    st.plotly_chart(fig3, use_container_width=True)
 
-# 3. Top 5 Wettest Subdivisions by Average Rainfall
-st.markdown("**🏆 Top 5 Wettest Subdivisions**")
-top5 = df.groupby("Sub_Division")["JUN-SEP"].mean().sort_values(ascending=False).head(5).index
-df_top5 = df[df["Sub_Division"].isin(top5)]
-fig3 = px.line(df_top5, x="YEAR", y="JUN-SEP", color="Sub_Division",
-               title="Top 5 Wettest Subdivisions (JUN–SEP Rainfall)")
-st.plotly_chart(fig3)
-
-# 4. Heatmap: Subdivision-Year Rainfall Matrix
-st.markdown("**🗺️ Heatmap of JUN–SEP Rainfall by Subdivision & Year**")
-pivot = df.pivot_table(index="Sub_Division", columns="YEAR", values="JUN-SEP")
-fig4 = px.imshow(pivot, aspect="auto", color_continuous_scale="Blues",
+# Heatmap: Subdivision vs Year
+st.subheader("3️⃣ Heatmap: Subdivision vs Year Rainfall")
+pivot_table = df.pivot_table(index="Sub_Division", columns="YEAR", values="JUN-SEP")
+fig4 = px.imshow(pivot_table,
+                 aspect="auto",
+                 color_continuous_scale="Viridis",
                  labels=dict(x="Year", y="Subdivision", color="Rainfall (mm)"),
-                 title="Subdivision-Year Rainfall Heatmap (JUN–SEP)")
-st.plotly_chart(fig4)
+                 title="Heatmap of JUN–SEP Rainfall by Subdivision & Year")
+st.plotly_chart(fig4, use_container_width=True)
+
+# Distribution Plot
+st.subheader("4️⃣ Distribution of JUN–SEP Rainfall")
+fig5 = px.histogram(df, x="JUN-SEP", nbins=50, title="Distribution of JUN–SEP Rainfall")
+st.plotly_chart(fig5, use_container_width=True)
