@@ -89,14 +89,30 @@ if st.button("Predict Rainfall"):
 import matplotlib.pyplot as plt
 
 # ================================
-# 📈 Rainfall Trend Analysis (Matplotlib)
-# ================================
-st.header("📈 Rainfall Trend Analysis")
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# 1️⃣ Year-wise Average JUN–SEP Rainfall in India
-st.subheader("1️⃣ Year-wise Average JUN–SEP Rainfall")
+st.title("🌧️ Indian Rainfall Analysis & Prediction Dashboard")
+
+# Load your CSV file (adjust path if needed)
+@st.cache_data
+def load_data():
+    df = pd.read_csv('rainfaLLIndia.csv')  # your actual file path here
+    return df
+
+df = load_data()
+
+# Basic preprocessing assuming your columns:
+# 'YEAR', 'JUN-SEP', 'Sub_Division'
+
+# Year-wise average rainfall
 yearly_trend = df.groupby("YEAR")["JUN-SEP"].mean().reset_index()
 
+st.header("📈 Rainfall Trend Analysis")
+
+# Plot year-wise average rainfall
+st.subheader("1️⃣ Year-wise Average JUN–SEP Rainfall")
 fig1, ax1 = plt.subplots(figsize=(10, 5))
 ax1.plot(yearly_trend["YEAR"], yearly_trend["JUN-SEP"], marker='o', color='teal', linewidth=2)
 ax1.set_title("Year-wise Average JUN-SEP Rainfall in India", fontsize=16)
@@ -105,8 +121,9 @@ ax1.set_ylabel("Average Rainfall (mm)")
 ax1.grid(True)
 st.pyplot(fig1)
 
-# 2️⃣ Subdivision-wise Rainfall Trend (Top 6)
+# Subdivision-wise trends for top 6 subdivisions by average rainfall
 st.subheader("2️⃣ Top 6 Subdivisions: JUN–SEP Rainfall Over the Years")
+
 top_subs = df.groupby("Sub_Division")["JUN-SEP"].mean().nlargest(6).index.tolist()
 sub_df = df[df["Sub_Division"].isin(top_subs)]
 
@@ -121,3 +138,4 @@ ax2.set_ylabel("Rainfall (mm)")
 ax2.legend(title="Subdivision", fontsize=8)
 ax2.grid(True)
 st.pyplot(fig2)
+
