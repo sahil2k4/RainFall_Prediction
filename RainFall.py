@@ -83,28 +83,3 @@ if st.button("Predict Rainfall"):
     
     prediction = model.predict(input_data)[0]
     st.success(f"Predicted JUN-SEP Rainfall for **{selected_division}** in **{future_year}**: **{prediction:.2f} mm**")
-
-# --- Visualizations ---
-st.subheader("📈 Visualizations")
-
-# 1. Year-wise Average Rainfall
-st.markdown("### India: Year-wise Average JUN-SEP Rainfall")
-year_avg = df.groupby("YEAR")["JUN-SEP"].mean().reset_index()
-fig1 = px.line(year_avg, x="YEAR", y="JUN-SEP", markers=True)
-st.plotly_chart(fig1, use_container_width=True)
-
-# 2. Rainfall Distribution by Top Subdivisions
-st.markdown("### Rainfall Distribution: Top 10 Subdivisions")
-top_subs = df["Sub_Division"].value_counts().head(10).index
-top_df = df[df["Sub_Division"].isin(top_subs)]
-fig2 = px.box(top_df, x="Sub_Division", y="JUN-SEP", color="Sub_Division")
-st.plotly_chart(fig2, use_container_width=True)
-
-# 3. Correlation Heatmap
-st.markdown("### Feature Correlation Heatmap")
-import seaborn as sns
-import matplotlib.pyplot as plt
-corr = df[["YEAR", "AVG_RAINFALL", "YOY_CHANGE", "LAG_1", "LAG_2", "JUN-SEP"]].corr()
-fig3, ax = plt.subplots(figsize=(8,6))
-sns.heatmap(corr, annot=True, cmap="Blues", ax=ax)
-st.pyplot(fig3)
