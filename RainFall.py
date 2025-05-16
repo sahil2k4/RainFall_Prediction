@@ -4,6 +4,9 @@ import numpy as np
 import plotly.express as px
 import warnings
 warnings.filterwarnings('ignore')
+import plotly.io as pio
+pio.templates.default = "plotly"
+
 
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder
