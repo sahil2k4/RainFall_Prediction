@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import plotly.graph_objects as go
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -16,7 +17,7 @@ st.title("🌧️ Indian Rainfall Analysis & Prediction Dashboard")
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_csv('/RainFall_Data.csv')
+        df = pd.read_csv('rainfaLLIndia.csv')
         return df
     except FileNotFoundError:
         st.error("rainfaLLIndia.csv not found. Please upload it.")
@@ -124,18 +125,30 @@ st.pyplot(fig1)
 # Subdivision-wise trends for top 6 subdivisions by average rainfall
 st.subheader("2️⃣ Top 6 Subdivisions: JUN–SEP Rainfall Over the Years")
 
-top_subs = df.groupby("Sub_Division")["JUN-SEP"].mean().nlargest(6).index.tolist()
-sub_df = df[df["Sub_Division"].isin(top_subs)]
+# Get top 6 subdivisions with most data
+top_subdivisions = df["subdivision"].value_counts().head(6).index
 
-fig2, ax2 = plt.subplots(figsize=(10, 6))
-for division in top_subs:
-    division_data = sub_df[sub_df["Sub_Division"] == division]
-    ax2.plot(division_data["YEAR"], division_data["JUN-SEP"], marker='o', label=division)
+# Initialize figure
+fig2 = go.Figure()
 
-ax2.set_title("Top 6 Subdivisions - Year-wise JUN-SEP Rainfall", fontsize=16)
-ax2.set_xlabel("Year")
-ax2.set_ylabel("Rainfall (mm)")
-ax2.legend(title="Subdivision", fontsize=8)
-ax2.grid(True)
-st.pyplot(fig2)
+# Add a trace for each subdivision
+for sub in top_subdivisions:
+    sub_data = df[df["subdivision"] == sub]
+    fig2.add_trace(go.Scatter(
+        x=sub_data["YEAR"],
+        y=sub_data["JUN-SEP"],
+        mode='lines+markers',
+        name=sub
+    ))
+
+# Customize layout
+fig2.update_layout(
+    title="📊 Year-wise JUN-SEP Rainfall Trend for Top 6 Subdivisions",
+    xaxis_title="Year",
+    yaxis_title="Rainfall (mm)",
+    legend_title="Subdivision",
+    template="plotly_white",
+    hovermode="x unified"
+)
+st.plotly_chart(fig2)
 
