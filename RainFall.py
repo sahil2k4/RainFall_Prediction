@@ -23,7 +23,7 @@ from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 from scipy.stats import zscore
 import statsmodels.api as sm
 
-st.title("Indian Rainfall Data Analysis & Prediction")
+st.title("🌧️ Indian Rainfall Data Analysis & Prediction")
 
 # Load data with path check
 def load_data():
@@ -35,21 +35,21 @@ def load_data():
     for p in paths:
         if os.path.exists(p):
             return pd.read_csv(p)
-    st.error("Data file not found. Please upload 'rainfaLLIndia.csv' or place it in the working directory.")
+    st.error("❌ Data file not found. Please upload 'rainfaLLIndia.csv' or place it in the working directory.")
     return None
 
 df = load_data()
 if df is None:
     st.stop()
 
-st.subheader("Raw Data Sample")
+st.subheader("🔍 Raw Data Sample")
 st.dataframe(df.head())
 
 # Rename column for consistency
 df.rename(columns={'subdivision': 'Sub_Division'}, inplace=True)
 
 # Identify duplicates
-st.subheader("Duplicate Rows Info")
+st.subheader("📊 Duplicate Rows Info")
 exact_duplicates = df[df.duplicated()]
 subset_duplicates = df[df.duplicated(subset=['Sub_Division', 'YEAR'], keep=False)]
 duplicate_counts = df.groupby(['Sub_Division', 'YEAR']).size().reset_index(name='count')
@@ -85,11 +85,11 @@ df['Sub_Division_Encoded'] = label_enc.fit_transform(df['Sub_Division'])
 df.dropna(subset=["AVG_RAINFALL", "YOY_CHANGE", "LAG_1", "LAG_2"], inplace=True)
 df.reset_index(drop=True, inplace=True)
 
-st.subheader("Feature Engineered Data Sample")
+st.subheader("🛠️ Feature Engineered Data Sample")
 st.dataframe(df.head())
 
-# Plot year-wise average rainfall
-st.subheader("Year-wise Average JUN-SEP Rainfall")
+# Year-wise average rainfall
+st.subheader("📈 Year-wise Average JUN-SEP Rainfall")
 yearly_trend = df.groupby("YEAR")["JUN-SEP"].mean().reset_index()
 fig = px.line(yearly_trend, x="YEAR", y="JUN-SEP", markers=True, 
               title="Year-wise Average JUN-SEP Rainfall in India", 
@@ -97,7 +97,7 @@ fig = px.line(yearly_trend, x="YEAR", y="JUN-SEP", markers=True,
 st.plotly_chart(fig, use_container_width=True)
 
 # Distribution boxplot for top subdivisions
-st.subheader("Rainfall Distribution by Top Subdivisions")
+st.subheader("📦 Rainfall Distribution by Top Subdivisions")
 top_subs = df["Sub_Division"].value_counts().head(10).index
 filtered_df = df[df["Sub_Division"].isin(top_subs)]
 fig2 = px.box(filtered_df, x="Sub_Division", y="JUN-SEP", color="Sub_Division", 
@@ -106,7 +106,7 @@ fig2.update_layout(showlegend=False)
 st.plotly_chart(fig2, use_container_width=True)
 
 # Correlation heatmap
-st.subheader("Correlation Matrix Heatmap")
+st.subheader("🔗 Correlation Matrix Heatmap")
 rainfall_cols = ["JUN", "JUL", "AUG", "SEP", "JUN-SEP"]
 corr_matrix = df[rainfall_cols].corr()
 fig3, ax = plt.subplots(figsize=(8,6))
@@ -114,8 +114,8 @@ sb.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5, 
 ax.set_title("Correlation Matrix of Rainfall Months and Total (JUN-SEP)")
 st.pyplot(fig3)
 
-# Machine Learning model training
-st.subheader("Train Random Forest Regression Model")
+# Model training
+st.subheader("🧠 Train Random Forest Regression Model")
 
 features = ["YEAR", "AVG_RAINFALL", "YOY_CHANGE", "LAG_1", "LAG_2", "Sub_Division_Encoded"]
 target = "JUN-SEP"
@@ -146,14 +146,13 @@ ax4.set_title("Actual vs Predicted JUN-SEP Rainfall")
 ax4.grid(True)
 st.pyplot(fig4)
 
-# Interactive prediction UI
-st.subheader("Predict JUN-SEP Rainfall")
+# Interactive prediction
+st.subheader("🎯 Predict JUN-SEP Rainfall")
 
 subdivision_input = st.selectbox("Select Subdivision", sorted(df["Sub_Division"].unique()))
 future_year_input = st.slider("Select Future Year", 2023, 2040, 2025)
 
 if st.button("Predict"):
-    # Find last record for subdivision
     sub_df = df[df["Sub_Division"] == subdivision_input].sort_values("YEAR")
     if sub_df.empty:
         st.error("Subdivision data not found.")
@@ -169,16 +168,16 @@ if st.button("Predict"):
         }
         input_df = pd.DataFrame([input_dict])
         prediction = rf_model.predict(input_df)[0]
-        st.success(f"Predicted JUN-SEP Rainfall for {subdivision_input} in {future_year_input}: {prediction:.2f} mm")
+        st.success(f"🌧️ Predicted JUN-SEP Rainfall for {subdivision_input} in {future_year_input}: {prediction:.2f} mm")
 
-# Clustering on subdivisions
-st.subheader("Clustering Subdivisions Based on Average Rainfall")
+# Clustering
+st.subheader("🔍 Clustering Subdivisions Based on Average Rainfall")
 
 df_cluster = df.groupby("Sub_Division")[["JUN", "JUL", "AUG", "SEP", "JUN-SEP"]].mean().reset_index()
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(df_cluster[["JUN", "JUL", "AUG", "SEP", "JUN-SEP"]])
 
-# KMeans Elbow method plot
+# KMeans Elbow Method
 inertias = []
 for k in range(2, 10):
     km = KMeans(n_clusters=k, random_state=42)
@@ -193,14 +192,14 @@ ax5.set_title("Elbow Method for KMeans Clustering")
 ax5.grid(True)
 st.pyplot(fig5)
 
-# Apply KMeans and DBSCAN clustering
+# Apply clustering
 kmeans = KMeans(n_clusters=4, random_state=42)
 df_cluster["KMeans_Cluster"] = kmeans.fit_predict(X_scaled)
 
 dbscan = DBSCAN(eps=1.5, min_samples=3)
 df_cluster["DBSCAN_Cluster"] = dbscan.fit_predict(X_scaled)
 
-# Plot clusters
+# Plot cluster assignment
 fig6, ax6 = plt.subplots(figsize=(10,5))
 sb.scatterplot(x=df_cluster["JUN-SEP"], y=df_cluster["JUL"], hue=df_cluster["KMeans_Cluster"],
                palette="tab10", s=100, ax=ax6)
@@ -211,5 +210,13 @@ ax6.legend(title="Cluster")
 ax6.grid(True)
 st.pyplot(fig6)
 
-st.subheader("Cluster Assignments")
-st.dataframe(df_cluster[["Sub
+# Interactive cluster view
+fig7 = px.scatter(df_cluster, x="JUN-SEP", y="JUL", color="KMeans_Cluster",
+                  hover_name="Sub_Division", title="KMeans Clustering of Subdivisions (Interactive)",
+                  labels={"JUN-SEP": "Avg JUN-SEP Rainfall", "JUL": "Avg JUL Rainfall"},
+                  template="plotly_white")
+st.plotly_chart(fig7, use_container_width=True)
+
+# Final output
+st.subheader("📋 Cluster Assignments Table")
+st.dataframe(df_cluster[["Sub_Division", "KMeans_Cluster", "DBSCAN_Cluster"]])
