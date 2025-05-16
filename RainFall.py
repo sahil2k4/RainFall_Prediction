@@ -83,7 +83,10 @@ if st.button("Predict Rainfall"):
     
     prediction = model.predict(input_data)[0]
     st.success(f"Predicted JUN-SEP Rainfall for **{selected_division}** in **{future_year}**: **{prediction:.2f} mm**")
-# ================================
+
+
+
+## ================================
 # 📈 Rainfall Trend Analysis
 # ================================
 st.header("📈 Rainfall Trend Analysis")
@@ -124,3 +127,4 @@ fig2 = px.line(
 )
 fig2.update_layout(title_font_size=20, title_x=0.5)
 st.plotly_chart(fig2, use_container_width=True)
+
