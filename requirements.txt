@@ -1,8 +1,9 @@
 streamlit
-matplotlib
 pandas
 numpy
-scikit-learn
+matplotlib
 seaborn
-joblib
 plotly
+scikit-learn
+statsmodels
+xgboost
