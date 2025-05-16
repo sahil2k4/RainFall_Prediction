@@ -16,7 +16,7 @@ st.title("🌧️ Indian Rainfall Analysis & Prediction Dashboard")
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_csv('rainfaLLIndia.csv')
+        df = pd.read_csv('/RainFall_Data.csv')
         return df
     except FileNotFoundError:
         st.error("rainfaLLIndia.csv not found. Please upload it.")
