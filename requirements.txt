@@ -1,8 +1,16 @@
-matplotlib==3.7.2
-numpy==1.24.3
-pandas==2.0.3
-plotly==5.9.0
-scikit_learn==1.3.0
-streamlit==1.45.1
-statsmodels
+# Core packages
+streamlit==1.35.0
+pandas==2.2.2
+numpy==1.26.4
 
+# Plotting libraries
+plotly==5.21.0
+matplotlib==3.8.4
+
+# Machine learning
+scikit-learn==1.4.2
+statsmodels==0.14.1
+
+# Optional: Suppress warnings (comes with Python, no need to list 'warnings')
+
+# For Streamlit Cloud compatibility, keep it simple and clean
