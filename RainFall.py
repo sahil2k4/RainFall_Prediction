@@ -86,6 +86,42 @@ if st.button("Predict Rainfall"):
     st.success(f"Predicted JUN-SEP Rainfall for **{selected_division}** in **{future_year}**: **{prediction:.2f} mm**")
 
 
+import plotly.graph_objects as go
+
+# Actual vs Predicted Scatter Plot using Plotly
+scatter_fig = go.Figure()
+
+# Scatter points
+scatter_fig.add_trace(go.Scatter(
+    x=y_test,
+    y=y_pred,
+    mode='markers',
+    marker=dict(color='teal', size=8, line=dict(width=1, color='black')),
+    name='Predicted vs Actual'
+))
+
+# Reference line y = x
+scatter_fig.add_trace(go.Scatter(
+    x=[y_test.min(), y_test.max()],
+    y=[y_test.min(), y_test.max()],
+    mode='lines',
+    line=dict(dash='dash', color='red'),
+    name='Ideal Line (y = x)'
+))
+
+# Layout settings
+scatter_fig.update_layout(
+    title="📉 Actual vs Predicted JUN–SEP Rainfall",
+    xaxis_title="Actual JUN–SEP Rainfall (mm)",
+    yaxis_title="Predicted JUN–SEP Rainfall (mm)",
+    template="plotly_white",
+    width=800,
+    height=600
+)
+
+# Show in Streamlit
+st.plotly_chart(scatter_fig, use_container_width=True)
+
 
 import matplotlib.pyplot as plt
 
@@ -94,7 +130,6 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-st.title("🌧️ Indian Rainfall Analysis & Prediction Dashboard")
 
 # Load your CSV file (adjust path if needed)
 @st.cache_data
@@ -112,15 +147,45 @@ yearly_trend = df.groupby("YEAR")["JUN-SEP"].mean().reset_index()
 
 st.header("📈 Rainfall Trend Analysis")
 
-# Plot year-wise average rainfall
+# 1️⃣ Year-wise Average JUN–SEP Rainfall
 st.subheader("1️⃣ Year-wise Average JUN–SEP Rainfall")
-fig1, ax1 = plt.subplots(figsize=(10, 5))
-ax1.plot(yearly_trend["YEAR"], yearly_trend["JUN-SEP"], marker='o', color='teal', linewidth=2)
-ax1.set_title("Year-wise Average JUN-SEP Rainfall in India", fontsize=16)
-ax1.set_xlabel("Year")
-ax1.set_ylabel("Average Rainfall (mm)")
-ax1.grid(True)
-st.pyplot(fig1)
+
+# Prepare yearly trend data
+yearly_trend = df.groupby("YEAR")["JUN-SEP"].mean().reset_index()
+
+# Plot using Plotly
+fig1 = px.line(
+    yearly_trend,
+    x="YEAR",
+    y="JUN-SEP",
+    markers=True,
+    title="Year-wise Average JUN–SEP Rainfall in India",
+    labels={"YEAR": "Year", "JUN-SEP": "Avg Rainfall (mm)"},
+    color_discrete_sequence=["teal"]
+)
+
+fig1.update_traces(line=dict(width=3))
+fig1.update_layout(title_x=0.5, template="simple_white")
+
+# Display plot in Streamlit
+st.plotly_chart(fig1, use_container_width=True)
+
+# Header
+st.markdown("### 📌 Key Insights: JUN–SEP Rainfall in India")
+
+# Stylized insights using Markdown and emojis
+st.markdown("""
+<div style='font-size:16px; line-height:1.6;'>
+
+🔹 **No clear long-term trend** – Rainfall hasn't consistently increased or decreased since **1901**.  
+🔹 **High year-to-year variation** – Indicates strong influence of **monsoon irregularities**.  
+🔹 **More extreme highs/lows post-2000** – Suggests **rising climate volatility**.  
+🔹 **Recent dry years** – Notably low rainfall around **2002**, **2015–2019**.
+
+</div>
+""", unsafe_allow_html=True)
+
+
 
 # Subdivision-wise trends for top 6 subdivisions by average rainfall
 st.subheader("2️⃣ Top 6 Subdivisions: JUN–SEP Rainfall Over the Years")
@@ -152,3 +217,189 @@ fig2.update_layout(
 )
 st.plotly_chart(fig2)
 
+
+# Individual insight points with markdown formatting
+st.markdown("""
+- **_Arunachal Pradesh (17)_** consistently records the **highest rainfall**, with a **rising trend post-2000** — _a potential sign of climate intensification_.
+- **_Konkan & Goa (28)_** shows **high but fluctuating rainfall**, maintaining a **stable overall trend** — _characteristic of coastal monsoon behavior_.
+- **_Vidarbha (31)_** and **_West Rajasthan (35)_** experience **moderate and relatively steady rainfall**, with **subtle increases in recent years**.
+- **_Madhya Maharashtra (29)_** and **_Marathwada (30)_** receive the **lowest rainfall**, with **frequent drought-like dips** — _critical for agricultural planning and water resource management_.
+- **Most subdivisions** exhibit **greater year-to-year variability**, suggesting a trend of **increasing climate instability**.
+""")
+
+import plotly.express as px
+import streamlit as st
+
+st.subheader("3️⃣ Distribution of JUN–SEP Rainfall Across India (All Years)")
+
+# Create histogram using Plotly
+fig = px.histogram( 
+    df,
+    x="JUN-SEP",
+    nbins=50,
+    title="🌧️ Distribution of JUN–SEP Rainfall Across India (All Years)",
+    labels={"JUN-SEP": "Rainfall (mm)"},
+    template="plotly_white",
+    color_discrete_sequence=["steelblue"]
+)
+
+fig.update_layout(
+    bargap=0.1,
+    title_x=0.5
+)
+
+# Display in Streamlit
+st.plotly_chart(fig, use_container_width=True)
+
+# Insight points with stylized markdown
+st.markdown("""
+- **Most common rainfall**: Majority of records fall between **500–1000 mm** during JUN–SEP.
+- **Right-skewed distribution**: Indicates that **high rainfall (2000+ mm)** is **rare** but does occur in some regions.
+- **Low rainfall events (<400 mm)** are also **frequent**, pointing to **drought-prone areas**.
+- **Significant variation**: Reflects **diverse climatic conditions** across India’s subdivisions.
+""")
+
+from sklearn.cluster import DBSCAN
+from sklearn.preprocessing import StandardScaler
+import plotly.express as px
+
+st.header("🔍 DBSCAN Clustering on Rainfall Data")
+
+# Select features for clustering
+features = ["JUN-SEP", "JUL"]
+df_cluster = df[["subdivision"] + features].groupby("subdivision").mean().reset_index()
+
+# Standardize
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(df_cluster[features])
+
+# DBSCAN
+dbscan = DBSCAN(eps=1.5, min_samples=3)
+df_cluster["DBSCAN_Cluster"] = dbscan.fit_predict(X_scaled)
+
+# Replace -1 with "Noise" for visualization
+df_cluster["Cluster_Label"] = df_cluster["DBSCAN_Cluster"].apply(lambda x: f"Cluster {x}" if x != -1 else "Noise")
+
+# Plot using Plotly
+fig = px.scatter(
+    df_cluster,
+    x="JUN-SEP",
+    y="JUL",
+    color="Cluster_Label",
+    hover_name="subdivision",
+    title="📍 DBSCAN Clusters of Subdivisions Based on Rainfall",
+    labels={"JUN-SEP": "Avg JUN-SEP Rainfall (mm)", "JUL": "Avg JUL Rainfall (mm)"},
+    width=900,
+    height=600,
+)
+
+fig.update_traces(marker=dict(size=12, line=dict(width=1, color="DarkSlateGrey")))
+fig.update_layout(title_x=0.5)
+st.plotly_chart(fig, use_container_width=True)
+
+# Show cluster assignments
+st.subheader("📊 Clustered Subdivisions (DBSCAN)")
+st.dataframe(df_cluster[["subdivision", "DBSCAN_Cluster"]].sort_values("DBSCAN_Cluster"), use_container_width=True)
+
+import streamlit as st
+import plotly.graph_objects as go
+import statsmodels.api as sm
+
+st.header("📈 National Rainfall Trend Analysis (JUN–SEP)")
+
+# Group by year to get national average
+df_national = df.groupby("YEAR")[["JUN-SEP"]].mean().reset_index()
+
+# Build trendline using OLS
+X = sm.add_constant(df_national["YEAR"])
+model = sm.OLS(df_national["JUN-SEP"], X).fit()
+df_national["TRENDLINE"] = model.predict(X)
+
+# Create interactive Plotly figure
+fig1 = go.Figure()
+
+fig1.add_trace(go.Scatter(
+    x=df_national["YEAR"],
+    y=df_national["JUN-SEP"],
+    mode='lines+markers',
+    name='Avg Rainfall (JUN-SEP)',
+    line=dict(color='blue')
+))
+
+fig1.add_trace(go.Scatter(
+    x=df_national["YEAR"],
+    y=df_national["TRENDLINE"],
+    mode='lines',
+    name='Trendline',
+    line=dict(color='red', dash='dash')
+))
+
+# Update layout
+fig1.update_layout(
+    title='📈 National Rainfall Trend (JUN–SEP)',
+    xaxis_title='Year',
+    yaxis_title='Average Rainfall (mm)',
+    template='plotly_white',
+    title_x=0.5
+)
+
+# Show in Streamlit
+st.plotly_chart(fig1, use_container_width=True)
+st.markdown("### 📊 **Additional Insights: National Trendline Observations**")
+
+st.markdown("""
+- 📉 There is a **slight declining trend** in **average rainfall over the years**, visible in the _red trendline_.
+- 📊 **High year-to-year variability** is evident, marked by **frequent spikes and drops**.
+- ⚠️ Despite occasional **extreme rainfall years**, there is **no consistent upward trend**, highlighting ongoing **climate instability**.
+""")
+import streamlit as st
+import pandas as pd
+import plotly.graph_objects as go
+
+# Assuming df is already loaded and has YEAR + JUN-SEP columns
+st.header("📉 Smoothed Long-Term Rainfall Trend (10-Year Rolling Average)")
+
+# Group by year to get national average JUN–SEP rainfall
+df_national = df.groupby("YEAR")[["JUN-SEP"]].mean().reset_index()
+
+# --- 10-Year Rolling Average ---
+df_national["ROLLING_MEAN"] = df_national["JUN-SEP"].rolling(window=10).mean()
+
+# Plot using Plotly
+fig2 = go.Figure()
+
+# Annual Rainfall
+fig2.add_trace(go.Scatter(
+    x=df_national["YEAR"],
+    y=df_national["JUN-SEP"],
+    mode='lines',
+    name='Annual Avg',
+    line=dict(color='gray', width=1)
+))
+
+# 10-Year Rolling Avg
+fig2.add_trace(go.Scatter(
+    x=df_national["YEAR"],
+    y=df_national["ROLLING_MEAN"],
+    mode='lines',
+    name='10-Year Rolling Avg',
+    line=dict(color='orange', width=3)
+))
+
+fig2.update_layout(
+    title='📉 Smoothed Long-Term Rainfall Trend (10-Year Rolling Avg)',
+    xaxis_title='Year',
+    yaxis_title='Rainfall (mm)',
+    template='plotly_white',
+    title_x=0.5
+)
+
+# Show chart
+st.plotly_chart(fig2, use_container_width=True)
+
+st.markdown("""
+- 🔼 **Peak around 1960s**: India saw the **highest sustained rainfall** during the 1960s.
+- 📉 **Gradual decline post-1970s**: The 10-year average shows a **steady decrease** in rainfall from the 1970s onward.
+- 🔁 **Reduced long-term variability**: Rolling average **smooths out spikes**, revealing a **consistent weakening trend** in monsoon strength.
+- ⚠️ Despite occasional **extreme rainfall years**, there is **no consistent upward trend**, pointing to possible **climate instability**.
+""")
