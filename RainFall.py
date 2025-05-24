@@ -1136,15 +1136,3 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Update requirements
-with open('requirements.txt', 'w') as f:
-    f.write('''streamlit==1.24.0
-streamlit-lottie==0.0.5
-requests==2.28.1
-pandas
-numpy
-plotly
-scikit-learn
-warnings
-time
-''')
