@@ -5,10 +5,6 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/sahil2k4/RainFall_Prediction/graphs/commit-activity)
 
-<div align="center">
-    <img src="https://raw.githubusercontent.com/sahil2k4/RainFall_Prediction/main/demo.gif" alt="Rainfall Dashboard Demo" width="800"/>
-</div>
-
 ## 📌 Overview
 
 An interactive dashboard built with Streamlit that provides comprehensive insights into India's rainfall patterns from 1901 to 2020. The application uses advanced machine learning techniques to analyze historical data and predict future rainfall trends across different regions of India.
@@ -61,13 +57,6 @@ The dataset includes:
 - **Features**: Historical rainfall, seasonal patterns, regional indicators
 - **Validation**: Cross-validation with historical data
 - **Accuracy**: Continuous validation against actual measurements
-
-## 📱 Screenshots
-
-<div align="center">
-    <img src="https://raw.githubusercontent.com/sahil2k4/RainFall_Prediction/main/screenshots/dashboard.png" alt="Dashboard Overview" width="400"/>
-    <img src="https://raw.githubusercontent.com/sahil2k4/RainFall_Prediction/main/screenshots/prediction.png" alt="Prediction Interface" width="400"/>
-</div>
 
 ## 📈 Features in Detail
 
@@ -141,6 +130,3 @@ Live Demo: [https://rainprediction-qjsf44fvdstq5yn8at6xrv.streamlit.app/](https:
 
 ---
 
-<div align="center">
-    Made with ❤️ using Streamlit | Data Source: Indian Meteorological Department
-</div>
