@@ -1,12 +1,12 @@
 # 🌧️ Indian Rainfall Analysis & Prediction Dashboard
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://rainfall-prediction.streamlit.app)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://rainprediction-qjsf44fvdstq5yn8at6xrv.streamlit.app/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/yourusername/rainfall-prediction/graphs/commit-activity)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/sahil2k4/RainFall_Prediction/graphs/commit-activity)
 
 <div align="center">
-    <img src="https://i.imgur.com/YOUR_DEMO_GIF.gif" alt="Rainfall Dashboard Demo" width="800"/>
+    <img src="https://raw.githubusercontent.com/sahil2k4/RainFall_Prediction/main/demo.gif" alt="Rainfall Dashboard Demo" width="800"/>
 </div>
 
 ## 📌 Overview
@@ -26,8 +26,8 @@ An interactive dashboard built with Streamlit that provides comprehensive insigh
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/rainfall-prediction.git
-   cd rainfall-prediction
+   git clone https://github.com/sahil2k4/RainFall_Prediction.git
+   cd RainFall_Prediction
    ```
 
 2. **Install dependencies**
@@ -65,8 +65,8 @@ The dataset includes:
 ## 📱 Screenshots
 
 <div align="center">
-    <img src="path_to_screenshot1.png" alt="Dashboard Overview" width="400"/>
-    <img src="path_to_screenshot2.png" alt="Prediction Interface" width="400"/>
+    <img src="https://raw.githubusercontent.com/sahil2k4/RainFall_Prediction/main/screenshots/dashboard.png" alt="Dashboard Overview" width="400"/>
+    <img src="https://raw.githubusercontent.com/sahil2k4/RainFall_Prediction/main/screenshots/prediction.png" alt="Prediction Interface" width="400"/>
 </div>
 
 ## 📈 Features in Detail
@@ -135,7 +135,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Sahil Bopche - [sahilbopche3@gmail.com](mailto:sahilbopche3@gmail.com)
 
-Project Link: [https://github.com/yourusername/rainfall-prediction](https://github.com/yourusername/rainfall-prediction)
+Project Link: [https://github.com/sahil2k4/RainFall_Prediction](https://github.com/sahil2k4/RainFall_Prediction)
+
+Live Demo: [https://rainprediction-qjsf44fvdstq5yn8at6xrv.streamlit.app/](https://rainprediction-qjsf44fvdstq5yn8at6xrv.streamlit.app/)
 
 ---
 
