@@ -9,7 +9,7 @@
 
 An interactive dashboard built with Streamlit that provides comprehensive insights into India's rainfall patterns from 1901 to 2020. The application uses advanced machine learning techniques to analyze historical data and predict future rainfall trends across different regions of India.
 
-### 🎯 Key Features
+###  Key Features
 
 - **Historical Analysis**: Explore rainfall patterns from 1901-2020
 - **Regional Comparison**: Compare rainfall across different subdivisions
@@ -18,7 +18,7 @@ An interactive dashboard built with Streamlit that provides comprehensive insigh
 - **Seasonal Analysis**: Monthly and seasonal pattern examination
 - **Risk Assessment**: Rainfall variability and trend analysis
 
-## 🚀 Quick Start
+##  Quick Start
 
 1. **Clone the repository**
    ```bash
@@ -51,7 +51,7 @@ The dataset includes:
 - Coverage of all major subdivisions of India
 - Monsoon season focus (June to September)
 
-## 🔮 Machine Learning Model
+##  Machine Learning Model
 
 - **Algorithm**: Random Forest Regressor
 - **Features**: Historical rainfall, seasonal patterns, regional indicators
