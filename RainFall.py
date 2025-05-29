@@ -3,12 +3,9 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-import warnings
-import time
 from streamlit_lottie import st_lottie
 import requests
-warnings.filterwarnings('ignore')
-
+import time
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
@@ -776,6 +773,7 @@ elif page == "🎯 Rainfall Prediction":
         future_year = st.slider("Select Future Year", 2023, 2040, 2025)
 
     if st.button("🔮 Predict Rainfall"):
+        np.random.seed(42)  # Ensure reproducibility for predictions
         sub_df = df[df["Sub_Division"] == selected_division].sort_values("YEAR")
         latest = sub_df.iloc[-1]
 
